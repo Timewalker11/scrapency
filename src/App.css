@@ -1,0 +1,104 @@
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 0.75rem 1.25rem;
+  background: #1a1a2e;
+  color: #fff;
+  height: 60px;
+  flex-shrink: 0;
+}
+
+.app-header h1 {
+  font-size: 1.25rem;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.search-input {
+  width: 100%;
+  max-width: 480px;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  border: none;
+  font-size: 0.95rem;
+}
+
+.app-main {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.map-message {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+}
+
+.map-error {
+  color: #b00020;
+}
+
+.sidebar {
+  width: 280px;
+  padding: 1rem;
+  overflow-y: auto;
+  background: #f7f7f9;
+  border-left: 1px solid #e0e0e5;
+  flex-shrink: 0;
+}
+
+.sidebar h2 {
+  font-size: 1rem;
+  margin-top: 0;
+}
+
+.sidebar .hint {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.marker-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.marker-list li {
+  padding: 0.5rem;
+  border-bottom: 1px solid #e0e0e5;
+  font-size: 0.85rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.marker-list li button {
+  border: none;
+  background: none;
+  color: #b00020;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+@media (max-width: 700px) {
+  .app-main {
+    flex-direction: column;
+  }
+  .sidebar {
+    width: 100%;
+    border-left: none;
+    border-top: 1px solid #e0e0e5;
+    max-height: 200px;
+  }
+}
