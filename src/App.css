@@ -21,31 +21,51 @@
   white-space: nowrap;
 }
 
-.search-input {
+.search-wrapper {
+  position: relative;
   width: 100%;
   max-width: 480px;
+}
+
+.search-input {
+  width: 100%;
   padding: 0.5rem 0.75rem;
   border-radius: 6px;
   border: none;
   font-size: 0.95rem;
 }
 
+.search-results {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  list-style: none;
+  margin: 0;
+  padding: 0.25rem 0;
+  max-height: 260px;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+.search-results li {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.85rem;
+  color: #1a1a1a;
+  cursor: pointer;
+}
+
+.search-results li:hover {
+  background: #f0f0f5;
+}
+
 .app-main {
   display: flex;
   flex: 1;
   min-height: 0;
-}
-
-.map-message {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #666;
-}
-
-.map-error {
-  color: #b00020;
 }
 
 .sidebar {
@@ -57,6 +77,33 @@
   flex-shrink: 0;
 }
 
+.sidebar-tabs {
+  display: flex;
+  gap: 0.25rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #e0e0e5;
+}
+
+.sidebar-tab {
+  border: none;
+  background: none;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.85rem;
+  color: #666;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+}
+
+.sidebar-tab:hover {
+  color: #1a1a2e;
+}
+
+.sidebar-tab.active {
+  color: #1a1a2e;
+  font-weight: 600;
+  border-bottom-color: #1a1a2e;
+}
+
 .sidebar h2 {
   font-size: 1rem;
   margin-top: 0;
@@ -65,6 +112,72 @@
 .sidebar .hint {
   font-size: 0.85rem;
   color: #666;
+}
+
+.sidebar .hint.error {
+  color: #b00020;
+}
+
+.hotels-section {
+  margin-bottom: 1.25rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e0e0e5;
+}
+
+.hotel-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.hotel-list li {
+  padding: 0.5rem;
+  margin: 0 -0.5rem;
+  border-bottom: 1px solid #e0e0e5;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.hotel-list li:hover,
+.hotel-list li:focus-visible {
+  background: #eef0fa;
+}
+
+.hotel-name {
+  font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.hotel-price {
+  font-weight: 500;
+  color: #1a1a2e;
+  white-space: nowrap;
+}
+
+.hotel-price-disclaimer {
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  font-style: italic;
+}
+
+.hotel-address {
+  color: #666;
+  font-size: 0.8rem;
+}
+
+.hotel-distance {
+  color: #1a1a2e;
+  font-size: 0.8rem;
+  margin-top: 0.15rem;
+}
+
+.plans-search {
+  margin-bottom: 0.75rem;
 }
 
 .marker-list {
@@ -89,6 +202,67 @@
   color: #b00020;
   cursor: pointer;
   font-size: 0.8rem;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 1rem;
+}
+
+.modal-card {
+  position: relative;
+  background: #fff;
+  border-radius: 10px;
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+}
+
+.modal-close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  border: none;
+  background: none;
+  font-size: 1.25rem;
+  line-height: 1;
+  color: #666;
+  cursor: pointer;
+}
+
+.modal-card h2 {
+  margin: 0 0 0.5rem;
+  padding-right: 1.5rem;
+  font-size: 1.15rem;
+}
+
+.modal-price {
+  margin: 0 0 0.25rem;
+  font-weight: 600;
+}
+
+.modal-address,
+.modal-distance {
+  margin: 0 0 0.25rem;
+  color: #666;
+  font-size: 0.85rem;
+}
+
+.modal-description {
+  margin: 0.75rem 0;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.modal-disclaimer {
+  margin: 0;
 }
 
 @media (max-width: 700px) {

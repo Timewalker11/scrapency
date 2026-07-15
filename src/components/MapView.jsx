@@ -1,53 +1,81 @@
-import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api'
+import { useEffect } from 'react'
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  Popup,
+  useMap,
+  useMapEvents,
+} from 'react-leaflet'
+import L from 'leaflet'
+import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png'
+import markerIcon from 'leaflet/dist/images/marker-icon.png'
+import markerShadow from 'leaflet/dist/images/marker-shadow.png'
+import 'leaflet/dist/leaflet.css'
 
-const containerStyle = {
-  width: '100%',
-  height: '100%',
+// L.Icon.Default always prepends its auto-detected imagePath even when
+// iconUrl/shadowUrl are overridden, which breaks under Vite's bundled
+// asset URLs. Building a plain L.icon() instead sidesteps that path
+// auto-detection and uses the bundled URLs as-is.
+const pinIcon = L.icon({
+  iconUrl: markerIcon,
+  iconRetinaUrl: markerIcon2x,
+  shadowUrl: markerShadow,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41],
+})
+
+const defaultCenter = [40.7128, -74.006] // New York City
+
+function ClickHandler({ onMapClick }) {
+  useMapEvents({
+    click(event) {
+      onMapClick({ lat: event.latlng.lat, lng: event.latlng.lng })
+    },
+  })
+  return null
 }
 
-const defaultCenter = { lat: 40.7128, lng: -74.006 } // New York City
+function FlyTo({ position }) {
+  const map = useMap()
 
-const libraries = ['places']
+  useEffect(() => {
+    if (position) {
+      map.flyTo([position.lat, position.lng], 15)
+    }
+  }, [position, map])
 
-function MapView({ markers, onMapClick, onMarkerRemove }) {
-  const { isLoaded, loadError } = useJsApiLoader({
-    id: 'google-map-script',
-    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
-    libraries,
-  })
+  return null
+}
 
-  const handleClick = (event) => {
-    onMapClick({ lat: event.latLng.lat(), lng: event.latLng.lng() })
-  }
-
-  if (loadError) {
-    return (
-      <div className="map-message map-error">
-        Failed to load Google Maps. Check your API key and enabled APIs.
-      </div>
-    )
-  }
-
-  if (!isLoaded) {
-    return <div className="map-message">Loading map…</div>
-  }
-
+function MapView({ markers, focusPosition, onMapClick, onMarkerRemove }) {
   return (
-    <GoogleMap
-      mapContainerStyle={containerStyle}
+    <MapContainer
       center={defaultCenter}
       zoom={12}
-      onClick={handleClick}
+      style={{ width: '100%', height: '100%' }}
     >
+      <TileLayer
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      />
+      <ClickHandler onMapClick={onMapClick} />
+      <FlyTo position={focusPosition} />
       {markers.map((marker) => (
         <Marker
           key={marker.id}
-          position={marker.position}
-          title={marker.label || ''}
-          onRightClick={() => onMarkerRemove(marker.id)}
-        />
+          position={[marker.position.lat, marker.position.lng]}
+          icon={pinIcon}
+          eventHandlers={{
+            contextmenu: () => onMarkerRemove(marker.id),
+          }}
+        >
+          <Popup>{marker.label || 'Dropped pin'}</Popup>
+        </Marker>
       ))}
-    </GoogleMap>
+    </MapContainer>
   )
 }
 

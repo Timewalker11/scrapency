@@ -1,53 +1,60 @@
-import { useRef } from 'react'
-import { Autocomplete, useJsApiLoader } from '@react-google-maps/api'
+import { useRef, useState } from 'react'
 
-const libraries = ['places']
+const NOMINATIM_URL = 'https://nominatim.openstreetmap.org/search'
 
 function SearchBar({ onPlaceSelected }) {
-  const autocompleteRef = useRef(null)
+  const [query, setQuery] = useState('')
+  const [results, setResults] = useState([])
+  const debounceRef = useRef(null)
 
-  const { isLoaded } = useJsApiLoader({
-    id: 'google-map-script',
-    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
-    libraries,
-  })
+  const search = async (value) => {
+    if (!value.trim()) {
+      setResults([])
+      return
+    }
 
-  const handlePlaceChanged = () => {
-    const place = autocompleteRef.current?.getPlace()
-    if (!place?.geometry?.location) return
-
-    onPlaceSelected(
-      {
-        lat: place.geometry.location.lat(),
-        lng: place.geometry.location.lng(),
-      },
-      place.name,
-    )
+    const url = `${NOMINATIM_URL}?format=json&q=${encodeURIComponent(value)}&limit=5`
+    const response = await fetch(url)
+    const data = await response.json()
+    setResults(data)
   }
 
-  if (!isLoaded) {
-    return (
-      <input
-        className="search-input"
-        placeholder="Loading search…"
-        disabled
-      />
+  const handleChange = (event) => {
+    const value = event.target.value
+    setQuery(value)
+
+    clearTimeout(debounceRef.current)
+    debounceRef.current = setTimeout(() => search(value), 400)
+  }
+
+  const handleSelect = (result) => {
+    onPlaceSelected(
+      { lat: parseFloat(result.lat), lng: parseFloat(result.lon) },
+      result.display_name,
     )
+    setQuery(result.display_name)
+    setResults([])
   }
 
   return (
-    <Autocomplete
-      onLoad={(autocomplete) => {
-        autocompleteRef.current = autocomplete
-      }}
-      onPlaceChanged={handlePlaceChanged}
-    >
+    <div className="search-wrapper">
       <input
         className="search-input"
         type="text"
         placeholder="Search for a place or address…"
+        value={query}
+        onChange={handleChange}
       />
-    </Autocomplete>
+      {results.length > 0 && (
+        <ul className="search-results">
+          {results.map((result) => (
+            <li key={result.place_id} onClick={() => handleSelect(result)}>
+              {result.display_name}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
   )
 }
 
