@@ -1,5 +1,5 @@
 import { Fragment, useState } from 'react'
-import { fetchNearbyHotels, ratingColor } from '../lib/hotels'
+import { fetchNearbyHotels, ratingColor, selectFeaturedHotels } from '../lib/hotels'
 
 function HotelCard({ hotel, onSelectHotel }) {
   const select = () => onSelectHotel(hotel)
@@ -82,6 +82,21 @@ function HotelCard({ hotel, onSelectHotel }) {
   )
 }
 
+function HotelGroup({ title, hotels, onSelectHotel }) {
+  if (hotels.length === 0) return null
+
+  return (
+    <div className="hotel-group">
+      <h3 className="hotel-group-title">{title}</h3>
+      <ul className="hotel-list">
+        {hotels.map((hotel) => (
+          <HotelCard key={hotel.id} hotel={hotel} onSelectHotel={onSelectHotel} />
+        ))}
+      </ul>
+    </div>
+  )
+}
+
 function HotelPanel({ panel, onSelectHotel }) {
   if (!panel || panel.loading) {
     return <p className="hint">Searching for hotels…</p>
@@ -89,17 +104,22 @@ function HotelPanel({ panel, onSelectHotel }) {
   if (panel.error) {
     return <p className="hint error">{panel.error}</p>
   }
-  if (panel.hotels.length === 0) {
+  if (panel.topRated.length === 0 && panel.cheapest.length === 0) {
     return <p className="hint">No hotels found nearby.</p>
   }
 
   return (
     <>
-      <ul className="hotel-list">
-        {panel.hotels.map((hotel) => (
-          <HotelCard key={hotel.id} hotel={hotel} onSelectHotel={onSelectHotel} />
-        ))}
-      </ul>
+      <HotelGroup
+        title="⭐ Top rated"
+        hotels={panel.topRated}
+        onSelectHotel={onSelectHotel}
+      />
+      <HotelGroup
+        title="💰 Best price"
+        hotels={panel.cheapest}
+        onSelectHotel={onSelectHotel}
+      />
       <p className="hint hotel-price-disclaimer">
         * Prices, ratings, and reviews are placeholder estimates, not live data.
       </p>
@@ -121,18 +141,19 @@ function StaysTab({ plans, onSelectHotel }) {
 
     setHotelPanels((prev) => ({
       ...prev,
-      [plan.id]: { loading: true, error: null, hotels: [] },
+      [plan.id]: { loading: true, error: null, topRated: [], cheapest: [] },
     }))
     try {
       const hotels = await fetchNearbyHotels(plan.position)
+      const { topRated, cheapest } = selectFeaturedHotels(hotels)
       setHotelPanels((prev) => ({
         ...prev,
-        [plan.id]: { loading: false, error: null, hotels },
+        [plan.id]: { loading: false, error: null, topRated, cheapest },
       }))
     } catch (error) {
       setHotelPanels((prev) => ({
         ...prev,
-        [plan.id]: { loading: false, error: error.message, hotels: [] },
+        [plan.id]: { loading: false, error: error.message, topRated: [], cheapest: [] },
       }))
     }
   }
@@ -149,20 +170,26 @@ function StaysTab({ plans, onSelectHotel }) {
         <ul className="marker-list plan-list">
           {plans.map((plan) => (
             <Fragment key={plan.id}>
-              <li>
+              <li
+                className="plan-expand-row"
+                role="button"
+                tabIndex={0}
+                aria-expanded={expandedPlanId === plan.id}
+                onClick={() => toggleHotels(plan)}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault()
+                    toggleHotels(plan)
+                  }
+                }}
+              >
                 <span className="plan-name">{plan.name}</span>
-                <span className="plan-actions">
-                  <button
-                    type="button"
-                    className="hotel-toggle-btn"
-                    onClick={() => toggleHotels(plan)}
-                  >
-                    {expandedPlanId === plan.id ? 'Hide hotels' : '🏨 Hotels'}
-                  </button>
+                <span className="plan-expand-chevron">
+                  {expandedPlanId === plan.id ? '▲' : '▼'}
                 </span>
               </li>
               {expandedPlanId === plan.id && (
-                <li className="plan-hotels">
+                <li className="plan-expand-panel">
                   <HotelPanel
                     panel={hotelPanels[plan.id]}
                     onSelectHotel={onSelectHotel}

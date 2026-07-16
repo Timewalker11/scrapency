@@ -1,6 +1,6 @@
 import { haversineMiles } from './geo'
+import { queryOverpass } from './overpass'
 
-const OVERPASS_URL = 'https://overpass-api.de/api/interpreter'
 const RADIUS_METERS = 16093 // 10 miles
 const MAX_RESULTS = 20
 const MOCK_PRICE_MIN = 79
@@ -81,18 +81,29 @@ export function ratingColor(rating) {
   return '#b00020'
 }
 
+const FEATURED_TOP_RATED_COUNT = 3
+const FEATURED_CHEAPEST_COUNT = 2
+
+// Narrows a full nearby-hotels list down to a short, mixed shortlist instead
+// of dumping every result: the highest-rated few plus the cheapest few,
+// deduped so a hotel that's both doesn't take two slots.
+export function selectFeaturedHotels(hotels) {
+  const topRated = [...hotels]
+    .sort((a, b) => b.rating - a.rating)
+    .slice(0, FEATURED_TOP_RATED_COUNT)
+  const topRatedIds = new Set(topRated.map((hotel) => hotel.id))
+
+  const cheapest = hotels
+    .filter((hotel) => !topRatedIds.has(hotel.id))
+    .sort((a, b) => a.estimatedPricePerNight - b.estimatedPricePerNight)
+    .slice(0, FEATURED_CHEAPEST_COUNT)
+
+  return { topRated, cheapest }
+}
+
 export async function fetchNearbyHotels(position) {
   const query = `[out:json][timeout:25];node(around:${RADIUS_METERS},${position.lat},${position.lng})[tourism=hotel];out body;`
-  const response = await fetch(OVERPASS_URL, {
-    method: 'POST',
-    body: `data=${encodeURIComponent(query)}`,
-  })
-
-  if (!response.ok) {
-    throw new Error(`Hotel search failed (${response.status})`)
-  }
-
-  const data = await response.json()
+  const data = await queryOverpass(query, 'Hotel search')
 
   return data.elements
     .filter((element) => element.tags?.name)

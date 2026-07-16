@@ -193,8 +193,6 @@ function App() {
         <ResizeHandle onResize={resizeSidebar} />
         <Sidebar
           width={sidebarWidth}
-          markers={markers}
-          onRemove={removeMarker}
           onSelectHotel={setSelectedHotel}
           plans={plans}
           onAddPlan={addPlan}

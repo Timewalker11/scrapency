@@ -1,6 +1,6 @@
 import { haversineMiles } from './geo'
+import { queryOverpass } from './overpass'
 
-const OVERPASS_URL = 'https://overpass-api.de/api/interpreter'
 const RADIUS_METERS = 80467 // 50 miles — airports are far sparser than hotels
 const MAX_RESULTS = 5
 
@@ -10,16 +10,7 @@ const MAX_RESULTS = 5
 // point to measure distance from.
 export async function fetchNearbyAirports(position) {
   const query = `[out:json][timeout:25];(node(around:${RADIUS_METERS},${position.lat},${position.lng})[aeroway=aerodrome];way(around:${RADIUS_METERS},${position.lat},${position.lng})[aeroway=aerodrome];relation(around:${RADIUS_METERS},${position.lat},${position.lng})[aeroway=aerodrome];);out center;`
-  const response = await fetch(OVERPASS_URL, {
-    method: 'POST',
-    body: `data=${encodeURIComponent(query)}`,
-  })
-
-  if (!response.ok) {
-    throw new Error(`Airport search failed (${response.status})`)
-  }
-
-  const data = await response.json()
+  const data = await queryOverpass(query, 'Airport search')
 
   const airports = data.elements
     .filter((element) => element.tags?.name)

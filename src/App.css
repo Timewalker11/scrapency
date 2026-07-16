@@ -155,6 +155,16 @@
   color: #b00020;
 }
 
+.hotel-group {
+  margin-bottom: 0.75rem;
+}
+
+.hotel-group-title {
+  font-size: 0.78rem;
+  margin: 0 0 0.35rem;
+  color: #1a1a2e;
+}
+
 .hotel-list {
   list-style: none;
   margin: 0;
@@ -394,11 +404,21 @@
   flex-shrink: 0;
 }
 
-.plan-list li button.hotel-toggle-btn {
-  color: #1a73e8;
+.plan-list li.plan-expand-row {
+  cursor: pointer;
 }
 
-.plan-list li.plan-hotels {
+.plan-list li.plan-expand-row:hover {
+  background: #f5f6fb;
+}
+
+.plan-expand-chevron {
+  color: #1a73e8;
+  font-size: 0.7rem;
+  flex-shrink: 0;
+}
+
+.plan-list li.plan-expand-panel {
   cursor: default;
   display: block;
   padding: 0.5rem 0 0.75rem;
@@ -502,6 +522,40 @@
 .airport-disclaimer {
   margin-top: 0.25rem;
   font-size: 0.72rem;
+  font-style: italic;
+}
+
+.suggestion-list li {
+  align-items: center;
+}
+
+.suggestion-main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.suggestion-meta {
+  font-size: 0.72rem;
+  color: #666;
+}
+
+.suggestion-add-btn {
+  border: none;
+  border-radius: 6px;
+  background: #1a73e8;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.3rem 0.6rem;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.suggestion-disclaimer {
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
   font-style: italic;
 }
 

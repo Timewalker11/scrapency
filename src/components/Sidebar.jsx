@@ -4,12 +4,10 @@ import TravelsTab from './TravelsTab'
 import StaysTab from './StaysTab'
 import SuggestedTab from './SuggestedTab'
 
-const TABS = ['Landmarks', 'Travels', 'Stays', 'Suggested', 'Markers']
+const TABS = ['Landmarks', 'Travels', 'Stays', 'Suggested']
 
 function Sidebar({
   width,
-  markers,
-  onRemove,
   onSelectHotel,
   plans,
   onAddPlan,
@@ -50,31 +48,6 @@ function Sidebar({
         ))}
       </div>
 
-      {activeTab === 'Markers' && (
-        <section>
-          <h2>Saved Markers</h2>
-          {markers.length === 0 ? (
-            <p className="hint">
-              Click anywhere on the map to drop a marker, or search above.
-            </p>
-          ) : (
-            <ul className="marker-list">
-              {markers.map((marker) => (
-                <li key={marker.id}>
-                  <span>
-                    {marker.label ||
-                      `${marker.position.lat.toFixed(4)}, ${marker.position.lng.toFixed(4)}`}
-                  </span>
-                  <button type="button" onClick={() => onRemove(marker.id)}>
-                    Remove
-                  </button>
-                </li>
-              ))}
-            </ul>
-          )}
-        </section>
-      )}
-
       {activeTab === 'Landmarks' && (
         <LandmarksTab
           plans={plans}
@@ -109,7 +82,9 @@ function Sidebar({
         <StaysTab plans={plans} onSelectHotel={onSelectHotel} />
       )}
 
-      {activeTab === 'Suggested' && <SuggestedTab />}
+      {activeTab === 'Suggested' && (
+        <SuggestedTab plans={plans} onAddPlan={onAddPlan} />
+      )}
     </aside>
   )
 }
