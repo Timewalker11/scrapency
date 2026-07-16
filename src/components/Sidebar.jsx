@@ -1,20 +1,35 @@
 import { useState } from 'react'
 import PlansTab from './PlansTab'
 
-const TABS = ['Hotels', 'Markers', 'Plans']
+const TABS = ['Plans', 'Markers']
 
 function Sidebar({
+  width,
   markers,
   onRemove,
-  hotels,
-  hotelsLoading,
-  hotelsError,
   onSelectHotel,
+  plans,
+  onAddPlan,
+  onRemovePlan,
+  onReorderPlans,
+  onOptimizeRoute,
+  routeDistanceMiles,
+  userPosition,
+  legModes,
+  onSetLegMode,
+  tripStart,
+  tripEnd,
+  onSetTripStart,
+  onSetTripEnd,
+  tripPlan,
+  tripPlanLoading,
+  tripPlanError,
+  onCalculateTripPlan,
 }) {
   const [activeTab, setActiveTab] = useState(TABS[0])
 
   return (
-    <aside className="sidebar">
+    <aside className="sidebar" style={{ '--sidebar-width': `${width}px` }}>
       <div className="sidebar-tabs" role="tablist">
         {TABS.map((tab) => (
           <button
@@ -29,56 +44,6 @@ function Sidebar({
           </button>
         ))}
       </div>
-
-      {activeTab === 'Hotels' && (
-        <section className="hotels-section">
-          <h2>Nearby Hotels (10 mi)</h2>
-          {hotelsLoading && <p className="hint">Searching for hotels…</p>}
-          {!hotelsLoading && hotelsError && (
-            <p className="hint error">{hotelsError}</p>
-          )}
-          {!hotelsLoading && !hotelsError && hotels.length === 0 && (
-            <p className="hint">Drop a marker to see nearby hotels.</p>
-          )}
-          {!hotelsLoading && !hotelsError && hotels.length > 0 && (
-            <>
-              <ul className="hotel-list">
-                {hotels.map((hotel) => (
-                  <li
-                    key={hotel.id}
-                    className="hotel-item"
-                    role="button"
-                    tabIndex={0}
-                    onClick={() => onSelectHotel(hotel)}
-                    onKeyDown={(event) => {
-                      if (event.key === 'Enter' || event.key === ' ') {
-                        event.preventDefault()
-                        onSelectHotel(hotel)
-                      }
-                    }}
-                  >
-                    <div className="hotel-name">
-                      <span>{hotel.name}</span>
-                      <span className="hotel-price">
-                        ~${hotel.estimatedPricePerNight}/night
-                      </span>
-                    </div>
-                    {hotel.address && (
-                      <div className="hotel-address">{hotel.address}</div>
-                    )}
-                    <div className="hotel-distance">
-                      {hotel.distanceMiles.toFixed(1)} mi
-                    </div>
-                  </li>
-                ))}
-              </ul>
-              <p className="hint hotel-price-disclaimer">
-                * Prices are placeholder estimates, not live rates.
-              </p>
-            </>
-          )}
-        </section>
-      )}
 
       {activeTab === 'Markers' && (
         <section>
@@ -105,7 +70,28 @@ function Sidebar({
         </section>
       )}
 
-      {activeTab === 'Plans' && <PlansTab />}
+      {activeTab === 'Plans' && (
+        <PlansTab
+          plans={plans}
+          onSelectHotel={onSelectHotel}
+          onAddPlan={onAddPlan}
+          onRemovePlan={onRemovePlan}
+          onReorderPlans={onReorderPlans}
+          onOptimizeRoute={onOptimizeRoute}
+          routeDistanceMiles={routeDistanceMiles}
+          userPosition={userPosition}
+          legModes={legModes}
+          onSetLegMode={onSetLegMode}
+          tripStart={tripStart}
+          tripEnd={tripEnd}
+          onSetTripStart={onSetTripStart}
+          onSetTripEnd={onSetTripEnd}
+          tripPlan={tripPlan}
+          tripPlanLoading={tripPlanLoading}
+          tripPlanError={tripPlanError}
+          onCalculateTripPlan={onCalculateTripPlan}
+        />
+      )}
     </aside>
   )
 }

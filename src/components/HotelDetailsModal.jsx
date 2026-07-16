@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { ratingColor } from '../lib/hotels'
 
 function HotelDetailsModal({ hotel, onClose }) {
   useEffect(() => {
@@ -31,16 +32,48 @@ function HotelDetailsModal({ hotel, onClose }) {
           &times;
         </button>
         <h2>{hotel.name}</h2>
-        <p className="modal-price">~${hotel.estimatedPricePerNight}/night</p>
+        {hotel.stars && (
+          <p className="modal-stars" title={`${hotel.stars}-star hotel`}>
+            {'★'.repeat(hotel.stars)}
+            <span className="hotel-card-stars-empty">
+              {'★'.repeat(5 - hotel.stars)}
+            </span>
+          </p>
+        )}
+        {typeof hotel.rating === 'number' && (
+          <p className="modal-rating">
+            <span
+              className="rating-score"
+              style={{ background: ratingColor(hotel.rating) }}
+            >
+              {hotel.rating.toFixed(1)}
+            </span>
+            <span className="rating-label">{hotel.ratingLabel}</span>
+            <span className="rating-count">{hotel.reviewCount} reviews</span>
+          </p>
+        )}
+        <p className="modal-price">
+          {hotel.originalPricePerNight && (
+            <span className="price-original">
+              ${hotel.originalPricePerNight}
+            </span>
+          )}
+          <span className="price-current">${hotel.estimatedPricePerNight}</span>
+          <span className="price-per-night">/night</span>
+        </p>
         {hotel.address && <p className="modal-address">{hotel.address}</p>}
         <p className="modal-distance">{hotel.distanceMiles.toFixed(1)} mi away</p>
-        <p className="modal-description">
-          Placeholder description for {hotel.name}. Details like amenities,
-          guest ratings, and photos will go here once connected to a live
-          hotel data source.
-        </p>
+        {hotel.amenities?.length > 0 && (
+          <div className="hotel-card-amenities modal-amenities">
+            {hotel.amenities.map((amenity) => (
+              <span key={amenity} className="amenity-badge">
+                {amenity}
+              </span>
+            ))}
+          </div>
+        )}
         <p className="hint modal-disclaimer">
-          * Price is a placeholder estimate, not a live rate.
+          * Price, rating, and amenities are placeholder estimates, not live data.
         </p>
       </div>
     </div>
