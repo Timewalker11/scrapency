@@ -84,7 +84,7 @@ export function estimateLeg(straightLineMiles, modeId) {
   return { distanceMiles, hours, costUsd }
 }
 
-// Shared by PlansTab (leg breakdown), MapView (route line coloring), and
+// Shared by TravelsTab (leg breakdown), MapView (route line coloring), and
 // tripPlan.js (cost/time totals) so all three read the same leg data.
 export function buildLegs(waypoints, legModes) {
   return waypoints.slice(0, -1).map((from, index) => {

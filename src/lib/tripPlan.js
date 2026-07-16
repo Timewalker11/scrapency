@@ -12,12 +12,15 @@ function cheapestHotel(hotels) {
 // Combines the ordered Plans list, per-leg travel mode/cost estimates, a
 // nights-per-stop split of the trip's date range, and a cheapest-hotel pick
 // per stop into one submitted trip plan.
+const TRAVELERS_PER_ROOM = 2
+
 export async function buildTripPlan({
   plans,
   legModes,
   userPosition,
   startDate,
   endDate,
+  travelers = 1,
 }) {
   if (plans.length === 0) {
     throw new Error('Add at least one destination to calculate a trip plan.')
@@ -27,6 +30,9 @@ export async function buildTripPlan({
   }
   if (endDate < startDate) {
     throw new Error('End date must be on or after the start date.')
+  }
+  if (!travelers || travelers < 1) {
+    throw new Error('Enter at least 1 traveler.')
   }
 
   const waypoints = userPosition
@@ -48,19 +54,24 @@ export async function buildTripPlan({
     plans.map((plan) => fetchNearbyHotels(plan.position).catch(() => [])),
   )
 
+  const rooms = Math.ceil(travelers / TRAVELERS_PER_ROOM)
+
   const stops = plans.map((plan, index) => {
     const hotel = cheapestHotel(hotelResults[index])
     const { arrival, departure, nights } = stopDates[index]
-    const hotelSubtotal = hotel ? hotel.estimatedPricePerNight * nights : 0
-    return { plan, arrival, departure, nights, hotel, hotelSubtotal }
+    const hotelSubtotal = hotel ? hotel.estimatedPricePerNight * nights * rooms : 0
+    return { plan, arrival, departure, nights, hotel, rooms, hotelSubtotal }
   })
 
-  const totalTravelCost = legs.reduce((sum, leg) => sum + leg.costUsd, 0)
+  const totalTravelCost =
+    legs.reduce((sum, leg) => sum + leg.costUsd, 0) * travelers
   const totalHotelCost = stops.reduce((sum, stop) => sum + stop.hotelSubtotal, 0)
 
   return {
     stops,
     legs,
+    travelers,
+    rooms,
     totalTravelCost,
     totalHotelCost,
     totalCost: totalTravelCost + totalHotelCost,

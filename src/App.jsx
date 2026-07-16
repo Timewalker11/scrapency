@@ -26,6 +26,7 @@ function App() {
   const [legModes, setLegModes] = useState({})
   const [tripStart, setTripStart] = useState('')
   const [tripEnd, setTripEnd] = useState('')
+  const [travelers, setTravelers] = useState(1)
   const [tripPlan, setTripPlan] = useState(null)
   const [tripPlanLoading, setTripPlanLoading] = useState(false)
   const [tripPlanError, setTripPlanError] = useState(null)
@@ -45,6 +46,11 @@ function App() {
     setTripPlan(null)
   }
 
+  const updateTravelers = (value) => {
+    setTravelers(value)
+    setTripPlan(null)
+  }
+
   const calculateTripPlan = async () => {
     setTripPlanLoading(true)
     setTripPlanError(null)
@@ -56,6 +62,7 @@ function App() {
           userPosition,
           startDate: tripStart,
           endDate: tripEnd,
+          travelers,
         }),
       )
     } catch (error) {
@@ -202,6 +209,8 @@ function App() {
           tripEnd={tripEnd}
           onSetTripStart={updateTripStart}
           onSetTripEnd={updateTripEnd}
+          travelers={travelers}
+          onSetTravelers={updateTravelers}
           tripPlan={tripPlan}
           tripPlanLoading={tripPlanLoading}
           tripPlanError={tripPlanError}

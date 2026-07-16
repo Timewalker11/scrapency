@@ -14,6 +14,8 @@ function TripPlanSummary({ plan }) {
   const {
     stops,
     legs,
+    travelers,
+    rooms,
     totalTravelCost,
     totalHotelCost,
     totalCost,
@@ -47,7 +49,8 @@ function TripPlanSummary({ plan }) {
             {stop.hotel ? (
               <div className="trip-plan-stop-hotel">
                 🏨 {stop.hotel.name} · ~${stop.hotel.estimatedPricePerNight}
-                /night · ${stop.hotelSubtotal.toFixed(0)} total
+                /night · {stop.rooms} room{stop.rooms === 1 ? '' : 's'} · $
+                {stop.hotelSubtotal.toFixed(0)} total
               </div>
             ) : (
               <div className="trip-plan-stop-hotel hint">
@@ -66,13 +69,17 @@ function TripPlanSummary({ plan }) {
             </span>
             <span className="leg-estimate">
               {leg.distanceMiles.toFixed(1)} mi · {formatDuration(leg.hours)} ·
-              ~${leg.costUsd.toFixed(0)}
+              ~${leg.costUsd.toFixed(0)}/traveler
             </span>
           </div>
         ))}
       </div>
 
       <div className="trip-plan-totals">
+        <div className="trip-plan-travelers">
+          {travelers} traveler{travelers === 1 ? '' : 's'} · {rooms} room
+          {rooms === 1 ? '' : 's'} per stop
+        </div>
         <div>Travel: ~${totalTravelCost.toFixed(0)}</div>
         <div>Hotels: ~${totalHotelCost.toFixed(0)}</div>
         <div className="trip-plan-grand-total">

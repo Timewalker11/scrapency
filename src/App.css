@@ -114,6 +114,7 @@
 
 .sidebar-tabs {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.25rem;
   margin-bottom: 1rem;
   border-bottom: 1px solid #e0e0e5;
@@ -122,10 +123,11 @@
 .sidebar-tab {
   border: none;
   background: none;
-  padding: 0.5rem 0.75rem;
-  font-size: 0.85rem;
+  padding: 0.5rem 0.5rem;
+  font-size: 0.8rem;
   color: #666;
   cursor: pointer;
+  white-space: nowrap;
   border-bottom: 2px solid transparent;
 }
 
@@ -546,6 +548,30 @@
   font-size: 0.85rem;
 }
 
+.trip-travelers-row {
+  margin: 0.75rem 0;
+}
+
+.trip-travelers-row label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.78rem;
+  color: #555;
+}
+
+.trip-travelers-row input[type='number'] {
+  padding: 0.4rem 0.5rem;
+  border-radius: 6px;
+  border: 1px solid #e0e0e5;
+  font-size: 0.85rem;
+  width: 5rem;
+}
+
+.trip-travelers-hint {
+  margin-top: 0.35rem;
+}
+
 .calculate-trip-btn {
   width: 100%;
   padding: 0.5rem 0.75rem;
@@ -613,6 +639,11 @@
   font-size: 0.85rem;
   padding-top: 0.5rem;
   border-top: 1px solid #e0e0e5;
+}
+
+.trip-plan-travelers {
+  color: #555;
+  margin-bottom: 0.25rem;
 }
 
 .trip-plan-grand-total {

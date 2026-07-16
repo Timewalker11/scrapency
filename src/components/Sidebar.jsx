@@ -1,7 +1,10 @@
 import { useState } from 'react'
-import PlansTab from './PlansTab'
+import LandmarksTab from './LandmarksTab'
+import TravelsTab from './TravelsTab'
+import StaysTab from './StaysTab'
+import SuggestedTab from './SuggestedTab'
 
-const TABS = ['Plans', 'Markers']
+const TABS = ['Landmarks', 'Travels', 'Stays', 'Suggested', 'Markers']
 
 function Sidebar({
   width,
@@ -21,6 +24,8 @@ function Sidebar({
   tripEnd,
   onSetTripStart,
   onSetTripEnd,
+  travelers,
+  onSetTravelers,
   tripPlan,
   tripPlanLoading,
   tripPlanError,
@@ -70,15 +75,20 @@ function Sidebar({
         </section>
       )}
 
-      {activeTab === 'Plans' && (
-        <PlansTab
+      {activeTab === 'Landmarks' && (
+        <LandmarksTab
           plans={plans}
-          onSelectHotel={onSelectHotel}
           onAddPlan={onAddPlan}
           onRemovePlan={onRemovePlan}
           onReorderPlans={onReorderPlans}
           onOptimizeRoute={onOptimizeRoute}
           routeDistanceMiles={routeDistanceMiles}
+        />
+      )}
+
+      {activeTab === 'Travels' && (
+        <TravelsTab
+          plans={plans}
           userPosition={userPosition}
           legModes={legModes}
           onSetLegMode={onSetLegMode}
@@ -86,12 +96,20 @@ function Sidebar({
           tripEnd={tripEnd}
           onSetTripStart={onSetTripStart}
           onSetTripEnd={onSetTripEnd}
+          travelers={travelers}
+          onSetTravelers={onSetTravelers}
           tripPlan={tripPlan}
           tripPlanLoading={tripPlanLoading}
           tripPlanError={tripPlanError}
           onCalculateTripPlan={onCalculateTripPlan}
         />
       )}
+
+      {activeTab === 'Stays' && (
+        <StaysTab plans={plans} onSelectHotel={onSelectHotel} />
+      )}
+
+      {activeTab === 'Suggested' && <SuggestedTab />}
     </aside>
   )
 }
